@@ -58,6 +58,12 @@ void TC1_Handler(void) {
 
 }
 
+void TC4_Handler(void) {
+	volatile uint32_t status = tc_get_status(TC1, 1);
+
+	pin_toggle(LED_PIO, LED_PIO_IDX_MASK);
+}
+
 void RTT_Handler(void) {
 	uint32_t ul_status;
 
@@ -203,6 +209,9 @@ void init(void){
 	sysclk_init();
 	WDT->WDT_MR = WDT_MR_WDDIS;
 	delay_init();
+	
+	TC_init(TC1, ID_TC4, 1, 5);
+	tc_start(TC1, 1);
 	
 	TC_init(TC0, ID_TC1, 1, 4);
 	tc_start(TC0, 1);
