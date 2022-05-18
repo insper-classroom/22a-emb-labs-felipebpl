@@ -36,7 +36,7 @@ extern void vApplicationTickHook(void);
 extern void vApplicationMallocFailedHook(void);
 extern void xPortSysTickHandler(void);
 
-SemaphoreHandle_t xMutex;
+SemaphoreHandle_t xMutexLVGL;
 
 extern void vApplicationStackOverflowHook(xTaskHandle *pxTask, signed char *pcTaskName) {
 	printf("stack overflow %x %s\r\n", pxTask, (portCHAR *)pcTaskName);
@@ -98,10 +98,10 @@ static void task_lcd(void *pvParameters) {
 	lv_ex_btn_1();
 
 	for (;;)  {
-		xSemaphoreTake( xMutex, portMAX_DELAY );
+		xSemaphoreTake( xMutexLVGL, portMAX_DELAY );
 		lv_tick_inc(50);
 		lv_task_handler();
-		xSemaphoreGive( xMutex );
+		xSemaphoreGive( xMutexLVGL );
 		vTaskDelay(50);
 	}
 }
@@ -202,7 +202,7 @@ int main(void) {
 		printf("Failed to create lcd task\r\n");
 	}
 	
-	xMutex = xSemaphoreCreateMutex();
+	xMutexLVGL = xSemaphoreCreateMutex();
 	
 	/* Start the scheduler. */
 	vTaskStartScheduler();
